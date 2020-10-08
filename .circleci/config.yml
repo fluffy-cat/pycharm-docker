@@ -1,0 +1,40 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: buildpack-deps:trusty
+    environment:
+      IMAGE_NAMESPACE: fluffycat
+      IMAGE_NAME: lull
+      IMAGE_TAG: 1.0.0
+      PIPENV_VERSION: 2020.8.13
+    steps:
+      - checkout
+      - run:
+        name: Determine image tag
+        command: echo 'export TAG=${IMAGE_TAG}-${CIRCLE_BUILD_NUM}' >> $BASH_ENV
+      - setup_remote_docker: {}
+      - run:
+          name: Build Docker image
+          command: >-
+            docker build --pull
+            -t $IMAGE_NAMESPACE/$IMAGE_NAME:$TAG
+            -t $IMAGE_NAMESPACE/$IMAGE_NAME:latest
+            --build-arg PIPENV_VERSION=$PIPENV_VERSION
+            .
+      - run:
+          name: Test Docker image
+          command: >-
+            docker run --rm $IMAGE_NAMESPACE/$IMAGE_NAME:$TAG /bin/bash -c
+            'test "pipenv, version $PIPENV_VERSION" == "$(pipenv --version)"'
+      - run:
+          name: Push Docker image
+          command: |
+            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            docker push $IMAGE_NAMESPACE/$IMAGE_NAME:$TAG
+            docker push $IMAGE_NAMESPACE/$IMAGE_NAME:latest
+workflows:
+  version: 2
+  test-then-build:
+    jobs:
+      - build
