@@ -10,10 +10,10 @@ jobs:
       PIPENV_VERSION: 2020.8.13
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: Determine image tag
           command: echo 'export TAG=${IMAGE_TAG}-${CIRCLE_BUILD_NUM}' >> $BASH_ENV
-      - setup_remote_docker
       - run:
           name: Build Docker image
           command: >-
