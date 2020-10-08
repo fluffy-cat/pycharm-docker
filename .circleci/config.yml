@@ -11,8 +11,8 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Determine image tag
-        command: echo 'export TAG=${IMAGE_TAG}-${CIRCLE_BUILD_NUM}' >> $BASH_ENV
+          name: Determine image tag
+          command: echo 'export TAG=${IMAGE_TAG}-${CIRCLE_BUILD_NUM}' >> $BASH_ENV
       - setup_remote_docker: {}
       - run:
           name: Build Docker image
@@ -37,4 +37,6 @@ workflows:
   version: 2
   test-then-build:
     jobs:
-      - build
+      - build:
+          context:
+            - docker-hub-credentials
