@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: buildpack-deps:trusty
+      - image: docker:19.03.13-git
     environment:
       IMAGE_NAMESPACE: fluffycat
       IMAGE_NAME: lull
@@ -13,7 +13,7 @@ jobs:
       - run:
           name: Determine image tag
           command: echo 'export TAG=${IMAGE_TAG}-${CIRCLE_BUILD_NUM}' >> $BASH_ENV
-      - setup_remote_docker: {}
+      - setup_remote_docker
       - run:
           name: Build Docker image
           command: >-
