@@ -25,7 +25,7 @@ jobs:
       - run:
           name: Test Docker image
           command: >-
-            docker run --rm $IMAGE_NAMESPACE/$IMAGE_NAME:$TAG /bin/bash -c
+            docker run --rm $IMAGE_NAMESPACE/$IMAGE_NAME:$TAG --entrypoint="/bin/bash -c"
             'test "pipenv, version $PIPENV_VERSION" == "$(pipenv --version)"'
       - run:
           name: Push Docker image
